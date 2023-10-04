@@ -8,7 +8,7 @@ from playwright.sync_api import Playwright, sync_playwright
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--frequency', default=10, type=int, help='Frequency of data collection in seconds')
-parser.add_argument('--outfile', default='data.csv', type=str, help='Output file name')
+parser.add_argument('--outfile', default='data3.csv', type=str, help='Output file name')
 
 def standardize_to_kw(power_string):
     """
@@ -16,8 +16,11 @@ def standardize_to_kw(power_string):
     """
 
     match = re.match(r'(\d+\.?\d*)\s*(\w+)', power_string)
-    num = float(match.group(1))
-    units = match.group(2)
+    try:
+        num = float(match.group(1))
+        units = match.group(2)
+    except AttributeError:
+        return float('nan')
     if units == 'kW':
         return num
     elif units == 'W':
