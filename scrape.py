@@ -4,11 +4,12 @@ import re
 import time
 
 import pandas as pd
+import playwright
 from playwright.sync_api import Playwright, sync_playwright
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--frequency', default=10, type=int, help='Frequency of data collection in seconds')
-parser.add_argument('--outfile', default='data3.csv', type=str, help='Output file name')
+parser.add_argument('--outfile', default='data5.csv', type=str, help='Output file name')
 
 def standardize_to_kw(power_string):
     """
@@ -46,7 +47,10 @@ def run(playwright: Playwright, args) -> None:
     while True:
         time.sleep(args.frequency)
         loc = page.locator("#pvText")
-        pv = loc.text_content()
+        try:
+            pv = loc.text_content()
+        except playwright._impl._api_types.TimeoutError:
+            continue
         loc = page.locator("#consumerText")
         consumer = loc.text_content()
         loc = page.locator("#gridText")
